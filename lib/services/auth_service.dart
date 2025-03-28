@@ -12,50 +12,33 @@ class AuthService extends BaseService {
     required String email,
     required String password,
   }) async {
-    Uri url = Endpoint.register.url;
-    var body = jsonEncode({
+    final body = jsonEncode({
       'name': name,
       'username': username,
       'email': email,
       'password': password,
     });
-    var response = await http.post(
-      url,
-      headers: headers,
-      body: body,
-    );
+    final response = await request(Endpoint.register, body, Method.post);
+    final data = jsonDecode(response.body);
+    final user = UserModel.fromJson(data);
+    await Storage.instance.saveUser(user);
 
-    if (response.statusCode == 201) {
-      var data = jsonDecode(response.body);
-      UserModel user = UserModel.fromJson(data);
-      await Storage.instance.saveToken(user.token);
-      return user;
-    } else {
-      throw Exception("Register failed");
-    }
+    return user;
   }
 
   Future<UserModel> login({
     required String email,
     required String password,
   }) async {
-    Uri url = Endpoint.login.url;
-    var body = jsonEncode({
+    final body = jsonEncode({
       'username': email,
       'password': password,
     });
-    var response = await http.post(
-      url,
-      headers: headers,
-      body: body,
-    );
+    final response = await request(Endpoint.login, body, Method.post);
+    final data = jsonDecode(response.body);
+    final user = UserModel.fromJson(data);
+    await Storage.instance.saveUser(user);
 
-    if (response.statusCode == 200) {
-      var data = jsonDecode(response.body);
-      UserModel user = UserModel.fromJson(data);
-      return user;
-    } else {
-      throw Exception("Login failed");
-    }
+    return user;
   }
 }

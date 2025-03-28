@@ -1,8 +1,8 @@
-
 import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:supershoes/providers/auth_provider.dart';
 import 'package:supershoes/providers/product_provider.dart';
 import 'package:supershoes/utils/theme.dart';
 
@@ -21,8 +21,11 @@ class _SplashPageState extends State<SplashPage> {
   }
 
   getInit() async {
+    final isLoggedIn =
+        await Provider.of<AuthProvider>(context, listen: false).getUser();
     await Provider.of<ProductProvider>(context, listen: false).getProducts();
-    Navigator.pushNamed(context, '/sign-in');
+
+    Navigator.pushNamed(context, isLoggedIn ? '/home' : '/sign-in');
   }
 
   @override
