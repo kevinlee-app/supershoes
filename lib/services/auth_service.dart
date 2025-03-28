@@ -1,23 +1,11 @@
 import 'dart:convert';
 
-import 'package:supershoes/models/token_model.dart';
 import 'package:supershoes/models/user_model.dart';
 import 'package:http/http.dart' as http;
+import 'package:supershoes/services/base_service.dart';
+import 'package:supershoes/utils/storage.dart';
 
-enum Endpoint {
-  register('/register'),
-  login('/login');
-
-  final String value;
-  const Endpoint(this.value);
-
-  final String baseUrl = 'http://10.0.2.2:8000';
-  Uri get url => Uri.parse('$baseUrl$value/');
-}
-
-class AuthService {
-  String baseUrl = 'http://127.0.0.1:8000';
-
+class AuthService extends BaseService {
   Future<UserModel> register({
     required String name,
     required String username,
@@ -25,7 +13,6 @@ class AuthService {
     required String password,
   }) async {
     Uri url = Endpoint.register.url;
-    var headers = {'Content-Type': 'application/json'};
     var body = jsonEncode({
       'name': name,
       'username': username,
@@ -41,6 +28,7 @@ class AuthService {
     if (response.statusCode == 201) {
       var data = jsonDecode(response.body);
       UserModel user = UserModel.fromJson(data);
+      await Storage.instance.saveToken(user.token);
       return user;
     } else {
       throw Exception("Register failed");
@@ -52,7 +40,6 @@ class AuthService {
     required String password,
   }) async {
     Uri url = Endpoint.login.url;
-    var headers = {'Content-Type': 'application/json'};
     var body = jsonEncode({
       'username': email,
       'password': password,

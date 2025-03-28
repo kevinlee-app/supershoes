@@ -1,7 +1,7 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:supershoes/theme.dart';
+import 'package:supershoes/utils/theme.dart';
 
 class ProductPage extends StatefulWidget {
   ProductPage({super.key});

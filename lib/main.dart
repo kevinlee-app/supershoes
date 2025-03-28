@@ -13,6 +13,7 @@ import 'package:supershoes/pages/splash_page.dart';
 import 'package:supershoes/pages/cart_page.dart';
 import 'package:supershoes/pages/checkout_success_page.dart';
 import 'package:supershoes/providers/auth_provider.dart';
+import 'package:supershoes/providers/product_provider.dart';
 
 void main() {
   runApp(const MainApp());
@@ -25,9 +26,8 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(
-          create: (context) => AuthProvider(),
-        )
+        ChangeNotifierProvider(create: (context) => AuthProvider()),
+        ChangeNotifierProvider(create: (context) => ProductProvider()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

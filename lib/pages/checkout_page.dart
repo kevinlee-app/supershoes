@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:supershoes/theme.dart';
+import 'package:supershoes/utils/theme.dart';
 import 'package:supershoes/widgets/checkout_card.dart';
 
 class CheckoutPage extends StatelessWidget {

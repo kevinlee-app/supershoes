@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:supershoes/models/user_model.dart';
 import 'package:supershoes/providers/auth_provider.dart';
-import 'package:supershoes/theme.dart';
+import 'package:supershoes/utils/theme.dart';
 
 class EditProfilePage extends StatefulWidget {
   const EditProfilePage({super.key});

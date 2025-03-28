@@ -3,7 +3,7 @@ import 'package:supershoes/pages/home/chat_page.dart';
 import 'package:supershoes/pages/home/home_page.dart';
 import 'package:supershoes/pages/home/profile_page.dart';
 import 'package:supershoes/pages/home/wishlist_page.dart';
-import 'package:supershoes/theme.dart';
+import 'package:supershoes/utils/theme.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});

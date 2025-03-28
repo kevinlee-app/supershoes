@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:supershoes/theme.dart';
+import 'package:supershoes/utils/theme.dart';
 
 class ChatTile extends StatelessWidget {
   const ChatTile({super.key});
