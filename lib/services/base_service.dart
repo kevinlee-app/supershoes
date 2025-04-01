@@ -12,10 +12,10 @@ enum Method {
 }
 
 enum Endpoint {
-  refreshToken('/api/token/refresh'),
-  register('/register'),
-  login('/login'),
-  products('/products');
+  refreshToken('api/token/refresh'),
+  register('register'),
+  login('login'),
+  products('products');
 
   final String value;
   const Endpoint(this.value);

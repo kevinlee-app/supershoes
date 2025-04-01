@@ -1,32 +1,23 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:provider/provider.dart';
+import 'package:supershoes/models/product_model.dart';
+import 'package:supershoes/providers/product_provider.dart';
+import 'package:supershoes/utils/string_extension.dart';
 import 'package:supershoes/utils/theme.dart';
+import 'package:supershoes/widgets/product_familiar_card.dart';
 
 class ProductPage extends StatefulWidget {
-  ProductPage({super.key});
+  const ProductPage({super.key});
 
   @override
   State<ProductPage> createState() => _ProductPageState();
 }
 
 class _ProductPageState extends State<ProductPage> {
-  List images = [
+  List defaultImages = [
     'assets/image_shoes.png',
-    'assets/image_shoes.png',
-    'assets/image_shoes.png'
-  ];
-
-  List familiarShoes = [
-    'assets/image_shoes.png',
-    'assets/image_shoes.png',
-    'assets/image_shoes.png',
-    'assets/image_shoes.png',
-    'assets/image_shoes.png',
-    'assets/image_shoes.png',
-    'assets/image_shoes.png',
-    'assets/image_shoes.png',
-    'assets/image_shoes.png'
   ];
 
   int currentIndex = 0;
@@ -35,6 +26,13 @@ class _ProductPageState extends State<ProductPage> {
 
   @override
   Widget build(BuildContext context) {
+    final args =
+        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+    final product = args['product'] as ProductModel;
+    final familiarProducts = Provider.of<ProductProvider>(context)
+        .products
+        .familiarProducts(product);
+
     Future<void> showSuccessDialog() async {
       return showDialog(
         context: context,
@@ -131,24 +129,6 @@ class _ProductPageState extends State<ProductPage> {
       );
     }
 
-    Widget familiarShoesCard(String imageUrl) {
-      return Container(
-        width: 54,
-        height: 54,
-        margin: EdgeInsets.only(
-          right: 16,
-        ),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(6),
-          image: DecorationImage(
-            image: AssetImage(
-              imageUrl,
-            ),
-          ),
-        ),
-      );
-    }
-
     Widget header() {
       int index = -1;
 
@@ -179,16 +159,23 @@ class _ProductPageState extends State<ProductPage> {
             ),
           ),
           CarouselSlider(
-            items: images
-                .map(
-                  (image) => Image.asset(
-                    image,
-                    width: MediaQuery.of(context).size.width,
-                    height: 310,
-                    fit: BoxFit.cover,
-                  ),
-                )
-                .toList(),
+            items: product.hasGallery()
+                ? product.gallery
+                    .map((gallery) => Image.network(gallery.imageUrl,
+                        width: MediaQuery.of(context).size.width,
+                        height: 310,
+                        fit: BoxFit.cover))
+                    .toList()
+                : defaultImages
+                    .map(
+                      (image) => Image.asset(
+                        image,
+                        width: MediaQuery.of(context).size.width,
+                        height: 310,
+                        fit: BoxFit.cover,
+                      ),
+                    )
+                    .toList(),
             options: CarouselOptions(
               initialPage: 0,
               onPageChanged: (index, reason) {
@@ -203,10 +190,15 @@ class _ProductPageState extends State<ProductPage> {
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: images.map((e) {
-              index++;
-              return indicator(index);
-            }).toList(),
+            children: product.hasGallery()
+                ? product.gallery.map((e) {
+                    index++;
+                    return indicator(index);
+                  }).toList()
+                : defaultImages.map((e) {
+                    index++;
+                    return indicator(index);
+                  }).toList(),
           )
         ],
       );
@@ -243,14 +235,14 @@ class _ProductPageState extends State<ProductPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'TERREX URBAN LOW',
+                          product.name,
                           style: primaryTextStyle.copyWith(
                             fontSize: 18,
                             fontWeight: semiBold,
                           ),
                         ),
                         Text(
-                          'Hiking',
+                          product.category.name,
                           style: secondaryTextStyle.copyWith(
                             fontSize: 12,
                           ),
@@ -310,7 +302,7 @@ class _ProductPageState extends State<ProductPage> {
                     style: primaryTextStyle,
                   ),
                   Text(
-                    '\$143,98',
+                    product.price.toIDR(),
                     style: priceTextStyle.copyWith(
                       fontSize: 16,
                       fontWeight: semiBold,
@@ -341,7 +333,7 @@ class _ProductPageState extends State<ProductPage> {
                     height: 12,
                   ),
                   Text(
-                    'Unpaved trails and mixed surfaces are easy when you have the traction and support you need. Casual enough for the daily commute.',
+                    product.description,
                     style: subtitleTextStyle.copyWith(
                       fontWeight: light,
                     ),
@@ -352,40 +344,45 @@ class _ProductPageState extends State<ProductPage> {
             ),
             // NOTE: FAMILIAR SHOES
 
-            Container(
-              width: double.infinity,
-              margin: EdgeInsets.only(
-                top: defaultMargin,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: defaultMargin,
+            familiarProducts.isNotEmpty
+                ? Container(
+                    width: double.infinity,
+                    margin: EdgeInsets.only(
+                      top: defaultMargin,
                     ),
-                    child: Text(
-                      'Familiar Shoes',
-                      style: primaryTextStyle.copyWith(fontWeight: medium),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: defaultMargin,
+                          ),
+                          child: Text(
+                            'Familiar Shoes',
+                            style:
+                                primaryTextStyle.copyWith(fontWeight: medium),
+                          ),
+                        ),
+                        SizedBox(
+                          height: 12,
+                        ),
+                        SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Row(
+                              children: familiarProducts.map((item) {
+                            index++;
+                            return Container(
+                                margin: EdgeInsets.only(
+                                    left: index == 0 ? defaultMargin : 0),
+                                child: ProductFamiliarCard(
+                                  product: item,
+                                ));
+                          }).toList()),
+                        ),
+                      ],
                     ),
-                  ),
-                  SizedBox(
-                    height: 12,
-                  ),
-                  SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                        children: familiarShoes.map((image) {
-                      index++;
-                      return Container(
-                          margin: EdgeInsets.only(
-                              left: index == 0 ? defaultMargin : 0),
-                          child: familiarShoesCard(image));
-                    }).toList()),
-                  ),
-                ],
-              ),
-            ),
+                  )
+                : Container(),
 
             // NOTE: BUTTONS
             Container(

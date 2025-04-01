@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:supershoes/models/product_model.dart';
+import 'package:supershoes/utils/string_extension.dart';
 import 'package:supershoes/utils/theme.dart';
 
 class ProductTile extends StatelessWidget {
-  const ProductTile({super.key});
+  final ProductModel product;
+
+  const ProductTile({super.key, required this.product});
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.pushNamed(context, '/product');
+        Navigator.pushNamed(context, '/product', arguments: {'product': product});
       },
       child: Container(
         margin: EdgeInsets.only(
@@ -20,12 +24,19 @@ class ProductTile extends StatelessWidget {
           children: [
             ClipRRect(
               borderRadius: BorderRadius.circular(20),
-              child: Image.asset(
-                'assets/image_shoes.png',
-                width: 120,
-                height: 120,
-                fit: BoxFit.cover,
-              ),
+              child: !product.hasGallery()
+                  ? Image.asset(
+                      'assets/image_shoes.png',
+                      width: 120,
+                      height: 120,
+                      fit: BoxFit.cover,
+                    )
+                  : Image.network(
+                      product.gallery[0].imageUrl,
+                      width: 120,
+                      height: 120,
+                      fit: BoxFit.cover,
+                    ),
             ),
             SizedBox(
               width: 12,
@@ -35,14 +46,14 @@ class ProductTile extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Football',
+                    product.category.name,
                     style: secondaryTextStyle.copyWith(fontSize: 12),
                   ),
                   SizedBox(
                     height: 6,
                   ),
                   Text(
-                    'Predator 20.3 Firm Ground',
+                    product.name,
                     style: primaryTextStyle.copyWith(
                       fontSize: 16,
                       fontWeight: semiBold,
@@ -52,7 +63,7 @@ class ProductTile extends StatelessWidget {
                     height: 6,
                   ),
                   Text(
-                    '\$68,15',
+                    product.price.toIDR(),
                     style: priceTextStyle.copyWith(fontWeight: medium),
                   ),
                 ],

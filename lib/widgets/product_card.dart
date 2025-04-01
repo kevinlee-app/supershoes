@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:supershoes/models/product_model.dart';
+import 'package:supershoes/utils/string_extension.dart';
 import 'package:supershoes/utils/theme.dart';
 
 class ProductCard extends StatelessWidget {
-  const ProductCard({super.key});
+  final ProductModel product;
+
+  const ProductCard({super.key, required this.product});
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.pushNamed(context, '/product');
+        Navigator.pushNamed(context, '/product', arguments: {'product': product});
       },
       child: Container(
         width: 215,
@@ -23,44 +27,52 @@ class ProductCard extends StatelessWidget {
             SizedBox(
               height: 30,
             ),
-            Image.asset(
-              'assets/image_shoes.png',
-              width: 215,
-              height: 150,
-              fit: BoxFit.cover,
-            ),
+            !product.hasGallery()
+                ? Image.asset(
+                    'assets/image_shoes.png',
+                    width: 215,
+                    height: 150,
+                    fit: BoxFit.cover,
+                  )
+                : Image.network(
+                    product.gallery[0].imageUrl,
+                    width: 215,
+                    height: 150,
+                    fit: BoxFit.cover,
+                  ),
             Container(
               margin: EdgeInsets.symmetric(
                 horizontal: 20,
               ),
-              child:
-                  Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Text(
-                  'Hiking',
-                  style: secondaryTextStyle.copyWith(fontSize: 12),
-                ),
-                SizedBox(
-                  height: 6,
-                ),
-                Text(
-                  'COURT VISION 2.0',
-                  style: blackTextStyle.copyWith(
-                    fontSize: 18,
-                    fontWeight: semiBold,
-                  ),
-                  overflow: TextOverflow.ellipsis,
-                ),
-                SizedBox(
-                  height: 6,
-                ),
-                Text(
-                  '\$58,67',
-                  style: priceTextStyle.copyWith(
-                    fontSize: 14,
-                    fontWeight: medium,
-                  ),
-                ),
-              ]),
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      product.category.name,
+                      style: secondaryTextStyle.copyWith(fontSize: 12),
+                    ),
+                    SizedBox(
+                      height: 6,
+                    ),
+                    Text(
+                      product.name,
+                      style: blackTextStyle.copyWith(
+                        fontSize: 18,
+                        fontWeight: semiBold,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    SizedBox(
+                      height: 6,
+                    ),
+                    Text(
+                      product.price.toIDR(),
+                      style: priceTextStyle.copyWith(
+                        fontSize: 14,
+                        fontWeight: medium,
+                      ),
+                    ),
+                  ]),
             ),
           ],
         ),

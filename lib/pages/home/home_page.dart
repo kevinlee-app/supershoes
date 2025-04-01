@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:supershoes/models/user_model.dart';
 import 'package:supershoes/providers/auth_provider.dart';
+import 'package:supershoes/providers/product_provider.dart';
 import 'package:supershoes/utils/theme.dart';
 import 'package:supershoes/widgets/product_card.dart';
 import 'package:supershoes/widgets/product_tile.dart';
@@ -12,6 +13,7 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     AuthProvider authProvider = Provider.of<AuthProvider>(context);
+    ProductProvider productProvider = Provider.of<ProductProvider>(context);
     UserModel user = authProvider.user;
 
     Widget header() {
@@ -206,13 +208,12 @@ class HomePage extends StatelessWidget {
                 width: defaultMargin,
               ),
               Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  ProductCard(),
-                  ProductCard(),
-                  ProductCard(),
-                ],
-              ),
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: productProvider.products
+                      .map((product) => ProductCard(
+                            product: product,
+                          ))
+                      .toList()),
             ],
           ),
         ),
@@ -240,12 +241,11 @@ class HomePage extends StatelessWidget {
       return Container(
         margin: EdgeInsets.only(top: 14),
         child: Column(
-          children: [
-            ProductTile(),
-            ProductTile(),
-            ProductTile(),
-            ProductTile(),
-          ],
+          children: productProvider.products
+              .map((product) => ProductTile(
+                    product: product,
+                  ))
+              .toList(),
         ),
       );
     }

@@ -34,8 +34,9 @@ class ProductModel {
         createdAt: DateTime.parse(json['created_at']),
         updatedAt: DateTime.parse(json['updated_at']),
         gallery: (json['gallery'] as List<dynamic>?)
-            ?.map((gallery) => GalleryModel.fromJson(gallery))
-            .toList() ?? []);
+                ?.map((gallery) => GalleryModel.fromJson(gallery))
+                .toList() ??
+            []);
   }
 
   Map<String, dynamic> toJson() {
@@ -50,5 +51,16 @@ class ProductModel {
       'updated_at': updatedAt.toString(),
       'gallery': gallery.map((gallery) => gallery.toJson()).toList(),
     };
+  }
+
+  bool hasGallery() {
+    return gallery.isNotEmpty && gallery[0].imageUrl.isNotEmpty;
+  }
+}
+
+extension ProductListExtensions on List<ProductModel> {
+  List<ProductModel> familiarProducts(ProductModel product) {
+    return where((item) => item.id != product.id && item.category.id == product.category.id)
+        .toList();
   }
 }
