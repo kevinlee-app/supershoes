@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
 import 'package:supershoes/models/product_model.dart';
+import 'package:supershoes/providers/cart_provider.dart';
 import 'package:supershoes/providers/product_provider.dart';
 import 'package:supershoes/providers/wishlist_provider.dart';
 import 'package:supershoes/utils/string_extension.dart';
@@ -32,6 +33,7 @@ class _ProductPageState extends State<ProductPage> {
         .products
         .familiarProducts(product);
     final wishlistProvider = Provider.of<WishlistProvider>(context);
+    final cartProvider = Provider.of<CartProvider>(context);
 
     Future<void> showSuccessDialog() async {
       return showDialog(
@@ -87,7 +89,10 @@ class _ProductPageState extends State<ProductPage> {
                   SizedBox(
                     height: 44,
                     child: TextButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.pop(context);
+                        Navigator.pushNamed(context, '/cart');
+                      },
                       style: TextButton.styleFrom(
                         padding: EdgeInsets.symmetric(
                           horizontal: 14,
@@ -255,19 +260,21 @@ class _ProductPageState extends State<ProductPage> {
                     onTap: () {
                       wishlistProvider.setProduct(product);
                       ScaffoldMessenger.of(context)
-                      ..hideCurrentSnackBar()
-                      ..showSnackBar(
-                        SnackBar(
-                          backgroundColor:
-                              wishlistProvider.isWishList(product) ? secondaryColor : alertColor,
-                          content: Text(
-                            wishlistProvider.isWishList(product)
-                                ? 'Has been added to the Wishlist'
-                                : 'Has been removed from the Wishlist',
-                            textAlign: TextAlign.center,
+                        ..hideCurrentSnackBar()
+                        ..showSnackBar(
+                          SnackBar(
+                            backgroundColor:
+                                wishlistProvider.isWishList(product)
+                                    ? secondaryColor
+                                    : alertColor,
+                            content: Text(
+                              wishlistProvider.isWishList(product)
+                                  ? 'Has been added to the Wishlist'
+                                  : 'Has been removed from the Wishlist',
+                              textAlign: TextAlign.center,
+                            ),
                           ),
-                        ),
-                      );
+                        );
                     },
                     child: Image.asset(
                       wishlistProvider.isWishList(product)
@@ -416,6 +423,7 @@ class _ProductPageState extends State<ProductPage> {
                       height: 54,
                       child: TextButton(
                         onPressed: () {
+                          cartProvider.addCart(product);
                           showSuccessDialog();
                         },
                         style: TextButton.styleFrom(

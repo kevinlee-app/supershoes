@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:supershoes/providers/cart_provider.dart';
+import 'package:supershoes/utils/extensions.dart';
 import 'package:supershoes/utils/theme.dart';
 import 'package:supershoes/widgets/checkout_card.dart';
 
@@ -7,6 +10,7 @@ class CheckoutPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final CartProvider cartProvider = Provider.of<CartProvider>(context);
     PreferredSizeWidget header() {
       return AppBar(
         iconTheme: IconThemeData(
@@ -40,8 +44,10 @@ class CheckoutPage extends StatelessWidget {
                     fontWeight: medium,
                   ),
                 ),
-                CheckoutCard(),
-                CheckoutCard(),
+                Column(
+                  children:
+                      cartProvider.carts.map((item) => CheckoutCard(cart: item)).toList(),
+                )
               ],
             ),
           ),
@@ -163,7 +169,7 @@ class CheckoutPage extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      '2 Items',
+                      cartProvider.totalItems().toQuantity(),
                       style: primaryTextStyle.copyWith(
                         fontWeight: medium,
                       ),
@@ -183,7 +189,7 @@ class CheckoutPage extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      '\$575.96',
+                      cartProvider.totalPrice().toIDR(),
                       style: primaryTextStyle.copyWith(
                         fontWeight: medium,
                       ),
@@ -230,7 +236,7 @@ class CheckoutPage extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      '\$575.96',
+                      cartProvider.totalPrice().toIDR(),
                       style: priceTextStyle.copyWith(
                         fontWeight: semiBold,
                       ),
