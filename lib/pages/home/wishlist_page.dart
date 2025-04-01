@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:supershoes/providers/wishlist_provider.dart';
 import 'package:supershoes/utils/theme.dart';
 import 'package:supershoes/widgets/wishlist_card.dart';
 
 class WishlistPage extends StatelessWidget {
-  const WishlistPage({super.key});
+  final void Function() backToHome;
+
+  const WishlistPage(this.backToHome, {super.key});
 
   @override
   Widget build(BuildContext context) {
+    final wishlistProvider = Provider.of<WishlistProvider>(context);
+
     Widget header() {
       return AppBar(
         backgroundColor: backgroundColor1,
@@ -55,7 +61,7 @@ class WishlistPage extends StatelessWidget {
               SizedBox(
                 height: 44,
                 child: TextButton(
-                  onPressed: () {},
+                  onPressed: backToHome,
                   style: TextButton.styleFrom(
                     padding: EdgeInsets.symmetric(
                       horizontal: 24,
@@ -86,15 +92,14 @@ class WishlistPage extends StatelessWidget {
         child: Container(
           color: backgroundColor3,
           child: ListView(
-            padding: EdgeInsets.symmetric(
-              horizontal: 30,
-            ),
-            children: [
-              WishlistCard(),
-              WishlistCard(),
-              WishlistCard(),
-            ],
-          ),
+              padding: EdgeInsets.symmetric(
+                horizontal: 30,
+              ),
+              children: wishlistProvider.wishlist
+                  .map((product) => WishlistCard(
+                        product: product,
+                      ))
+                  .toList()),
         ),
       );
     }
@@ -102,8 +107,7 @@ class WishlistPage extends StatelessWidget {
     return Column(
       children: [
         header(),
-        // emptyView(),
-        content(),
+        wishlistProvider.wishlist.isEmpty ? emptyView() : content(),
       ],
     );
   }

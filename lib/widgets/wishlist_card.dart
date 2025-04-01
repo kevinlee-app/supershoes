@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:supershoes/models/product_model.dart';
+import 'package:supershoes/providers/wishlist_provider.dart';
+import 'package:supershoes/utils/string_extension.dart';
 import 'package:supershoes/utils/theme.dart';
 
 class WishlistCard extends StatelessWidget {
-  const WishlistCard({super.key});
+  final ProductModel product;
+  const WishlistCard({super.key, required this.product});
 
   @override
   Widget build(BuildContext context) {
+    WishlistProvider wishlistProvider = Provider.of<WishlistProvider>(context);
     return Container(
       margin: EdgeInsets.only(
         top: 20,
@@ -24,10 +30,15 @@ class WishlistCard extends StatelessWidget {
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(12),
-            child: Image.asset(
-              'assets/image_shoes.png',
-              width: 60,
-            ),
+            child: product.hasGallery()
+                ? Image.network(
+                    product.gallery[0].imageUrl,
+                    width: 60,
+                  )
+                : Image.asset(
+                    'assets/image_shoes.png',
+                    width: 60,
+                  ),
           ),
           SizedBox(
             width: 12,
@@ -37,21 +48,24 @@ class WishlistCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Terrex Urban Low',
+                  product.name,
                   style: primaryTextStyle.copyWith(
                     fontWeight: semiBold,
                   ),
                 ),
                 Text(
-                  '\$143.98',
+                  product.price.toIDR(),
                   style: priceTextStyle,
                 ),
               ],
             ),
           ),
-          Image.asset(
-            'assets/image_wishlist_blue.png',
-            width: 34,
+          GestureDetector(
+            onTap: () => wishlistProvider.setProduct(product),
+            child: Image.asset(
+              'assets/image_wishlist_blue.png',
+              width: 34,
+            ),
           ),
         ],
       ),

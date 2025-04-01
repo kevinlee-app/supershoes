@@ -17,6 +17,13 @@ class _MainPageState extends State<MainPage> {
 
   @override
   Widget build(BuildContext context) {
+
+    void backToHome() {
+      setState(() {
+        currentIndex = 0;
+      });
+    }
+
     Widget cartButton() {
       return FloatingActionButton(
         onPressed: () {
@@ -104,7 +111,7 @@ class _MainPageState extends State<MainPage> {
         case 1:
           return ChatPage();
         case 2:
-          return WishlistPage();
+          return WishlistPage(backToHome);
         case 3:
           return ProfilePage();
 

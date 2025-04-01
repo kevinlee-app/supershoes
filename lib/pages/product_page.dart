@@ -4,6 +4,7 @@ import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
 import 'package:supershoes/models/product_model.dart';
 import 'package:supershoes/providers/product_provider.dart';
+import 'package:supershoes/providers/wishlist_provider.dart';
 import 'package:supershoes/utils/string_extension.dart';
 import 'package:supershoes/utils/theme.dart';
 import 'package:supershoes/widgets/product_familiar_card.dart';
@@ -22,8 +23,6 @@ class _ProductPageState extends State<ProductPage> {
 
   int currentIndex = 0;
 
-  bool isWishList = false;
-
   @override
   Widget build(BuildContext context) {
     final args =
@@ -32,6 +31,7 @@ class _ProductPageState extends State<ProductPage> {
     final familiarProducts = Provider.of<ProductProvider>(context)
         .products
         .familiarProducts(product);
+    final wishlistProvider = Provider.of<WishlistProvider>(context);
 
     Future<void> showSuccessDialog() async {
       return showDialog(
@@ -145,6 +145,7 @@ class _ProductPageState extends State<ProductPage> {
               children: [
                 GestureDetector(
                   onTap: () {
+                    ScaffoldMessenger.of(context).removeCurrentSnackBar();
                     Navigator.pop(context);
                   },
                   child: Icon(
@@ -252,15 +253,15 @@ class _ProductPageState extends State<ProductPage> {
                   ),
                   GestureDetector(
                     onTap: () {
-                      setState(() {
-                        isWishList = !isWishList;
-                      });
-                      ScaffoldMessenger.of(context).showSnackBar(
+                      wishlistProvider.setProduct(product);
+                      ScaffoldMessenger.of(context)
+                      ..hideCurrentSnackBar()
+                      ..showSnackBar(
                         SnackBar(
                           backgroundColor:
-                              isWishList ? secondaryColor : alertColor,
+                              wishlistProvider.isWishList(product) ? secondaryColor : alertColor,
                           content: Text(
-                            isWishList
+                            wishlistProvider.isWishList(product)
                                 ? 'Has been added to the Wishlist'
                                 : 'Has been removed from the Wishlist',
                             textAlign: TextAlign.center,
@@ -269,7 +270,7 @@ class _ProductPageState extends State<ProductPage> {
                       );
                     },
                     child: Image.asset(
-                      isWishList
+                      wishlistProvider.isWishList(product)
                           ? 'assets/image_wishlist_blue.png'
                           : 'assets/image_wishlist.png',
                       width: 46,
@@ -394,6 +395,7 @@ class _ProductPageState extends State<ProductPage> {
                 children: [
                   GestureDetector(
                     onTap: () {
+                      ScaffoldMessenger.of(context).removeCurrentSnackBar();
                       Navigator.pushNamed(context, '/detail-chat');
                     },
                     child: Container(

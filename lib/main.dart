@@ -14,6 +14,7 @@ import 'package:supershoes/pages/cart_page.dart';
 import 'package:supershoes/pages/checkout_success_page.dart';
 import 'package:supershoes/providers/auth_provider.dart';
 import 'package:supershoes/providers/product_provider.dart';
+import 'package:supershoes/providers/wishlist_provider.dart';
 
 void main() {
   runApp(const MainApp());
@@ -28,6 +29,7 @@ class MainApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (context) => AuthProvider()),
         ChangeNotifierProvider(create: (context) => ProductProvider()),
+        ChangeNotifierProvider(create: (context) => WishlistProvider()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
