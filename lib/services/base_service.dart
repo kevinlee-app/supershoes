@@ -15,7 +15,8 @@ enum Endpoint {
   refreshToken('api/token/refresh'),
   register('register'),
   login('login'),
-  products('products');
+  products('products'),
+  checkout('checkout');
 
   final String value;
   const Endpoint(this.value);
@@ -31,14 +32,14 @@ enum Endpoint {
 }
 
 class BaseService {
-  final _headers = {'Content-Type': 'application/json'};
+  var _headers = {'Content-Type': 'application/json'};
 
   Future<http.Response> request(Endpoint endpoint,
       [String? body, Method? method]) async {
     if (endpoint.useAuthorization) {
       TokenModel? token = (await Storage.instance.getUser())?.token;
       if (token != null) {
-        _headers['Authorization'] = token.access;
+        _headers['Authorization'] = 'Bearer ${token.access}';
       }
     }
 

@@ -6,7 +6,7 @@ import 'package:supershoes/models/product_model.dart';
 import 'package:supershoes/providers/cart_provider.dart';
 import 'package:supershoes/providers/product_provider.dart';
 import 'package:supershoes/providers/wishlist_provider.dart';
-import 'package:supershoes/utils/string_extension.dart';
+import 'package:supershoes/utils/extensions.dart';
 import 'package:supershoes/utils/theme.dart';
 import 'package:supershoes/widgets/product_familiar_card.dart';
 

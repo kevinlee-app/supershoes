@@ -25,10 +25,14 @@ class ProfilePage extends StatelessWidget {
             child: Row(
               children: [
                 ClipOval(
-                  child: Image.asset(
-                    'assets/image_profile.png',
-                    width: 64,
-                  ),
+                  child: user.profilePhotoUrl.isEmpty
+                      ? Image.asset(
+                          'assets/image_profile.png',
+                          width: 64,
+                        )
+                      : Image.network(
+                          user.profilePhotoUrl,
+                        ),
                 ),
                 SizedBox(
                   width: 16,
@@ -54,16 +58,15 @@ class ProfilePage extends StatelessWidget {
                   ),
                 ),
                 GestureDetector(
-                    onTap: () {
-                      Navigator.pushNamedAndRemoveUntil(
-                          context, '/sign-in', (route) => false);
-                    },
-                    child: user.profilePhotoUrl.isEmpty
-                        ? Image.asset(
-                            'assets/image_exit.png',
-                            width: 20,
-                          )
-                        : Image.network(user.profilePhotoUrl)),
+                  onTap: () {
+                    Navigator.pushNamedAndRemoveUntil(
+                        context, '/sign-in', (route) => false);
+                  },
+                  child: Image.asset(
+                    'assets/image_exit.png',
+                    width: 20,
+                  ),
+                ),
               ],
             ),
           ),

@@ -1,16 +1,44 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:supershoes/providers/cart_provider.dart';
+import 'package:supershoes/providers/transaction_provider.dart';
 import 'package:supershoes/utils/extensions.dart';
 import 'package:supershoes/utils/theme.dart';
 import 'package:supershoes/widgets/checkout_card.dart';
+import 'package:supershoes/widgets/loading_button.dart';
 
-class CheckoutPage extends StatelessWidget {
+class CheckoutPage extends StatefulWidget {
   const CheckoutPage({super.key});
+
+  @override
+  State<CheckoutPage> createState() => _CheckoutPageState();
+}
+
+class _CheckoutPageState extends State<CheckoutPage> {
+  bool isLoading = false;
 
   @override
   Widget build(BuildContext context) {
     final CartProvider cartProvider = Provider.of<CartProvider>(context);
+    final TransactionProvider transactionProvider =
+        Provider.of<TransactionProvider>(context);
+
+    handleCheckout() async {
+      setState(() {
+        isLoading = true;
+      });
+      if (await transactionProvider.checkout(
+          cartProvider.carts, cartProvider.totalPrice())) {
+        cartProvider.carts.clear();
+        Navigator.pushNamedAndRemoveUntil(
+            context, '/checkout-success', (route) => false);
+      } else {
+        setState(() {
+          isLoading = false;
+        });
+      }
+    }
+
     PreferredSizeWidget header() {
       return AppBar(
         iconTheme: IconThemeData(
@@ -45,8 +73,9 @@ class CheckoutPage extends StatelessWidget {
                   ),
                 ),
                 Column(
-                  children:
-                      cartProvider.carts.map((item) => CheckoutCard(cart: item)).toList(),
+                  children: cartProvider.carts
+                      .map((item) => CheckoutCard(cart: item))
+                      .toList(),
                 )
               ],
             ),
@@ -256,31 +285,36 @@ class CheckoutPage extends StatelessWidget {
             thickness: 1,
             color: dividerColor,
           ),
-          Container(
-            height: 50,
-            margin: EdgeInsets.symmetric(vertical: defaultMargin),
-            width: double.infinity,
-            child: TextButton(
-              onPressed: () {
-                Navigator.pushNamedAndRemoveUntil(
-                    context, '/checkout-success', (route) => false);
-              },
-              style: TextButton.styleFrom(
-                  backgroundColor: primaryColor,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(
-                      12,
+          isLoading
+              ? Container(
+                  margin: EdgeInsets.only(
+                    bottom: 30,
+                  ),
+                  child: LoadingButton())
+              : Container(
+                  height: 50,
+                  margin: EdgeInsets.symmetric(vertical: defaultMargin),
+                  width: double.infinity,
+                  child: TextButton(
+                    onPressed: () {
+                      handleCheckout();
+                    },
+                    style: TextButton.styleFrom(
+                        backgroundColor: primaryColor,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(
+                            12,
+                          ),
+                        )),
+                    child: Text(
+                      'Checkout Now',
+                      style: primaryTextStyle.copyWith(
+                        fontSize: 16,
+                        fontWeight: semiBold,
+                      ),
                     ),
-                  )),
-              child: Text(
-                'Checkout Now',
-                style: primaryTextStyle.copyWith(
-                  fontSize: 16,
-                  fontWeight: semiBold,
-                ),
-              ),
-            ),
-          )
+                  ),
+                )
         ],
       );
     }

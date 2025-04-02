@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:supershoes/providers/cart_provider.dart';
-import 'package:supershoes/utils/string_extension.dart';
+import 'package:supershoes/utils/extensions.dart';
 import 'package:supershoes/utils/theme.dart';
 import 'package:supershoes/widgets/cart_card.dart';
 

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:supershoes/models/product_model.dart';
-import 'package:supershoes/utils/string_extension.dart';
+import 'package:supershoes/utils/extensions.dart';
 import 'package:supershoes/utils/theme.dart';
 
 class ProductCard extends StatelessWidget {
