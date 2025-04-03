@@ -8,8 +8,8 @@ class ProductModel {
   final String description;
   final String tags;
   final CategoryModel category;
-  final DateTime createdAt;
-  final DateTime updatedAt;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
   final List<GalleryModel> gallery;
 
   ProductModel(
@@ -60,7 +60,21 @@ class ProductModel {
 
 extension ProductListExtensions on List<ProductModel> {
   List<ProductModel> familiarProducts(ProductModel product) {
-    return where((item) => item.id != product.id && item.category.id == product.category.id)
+    return where((item) =>
+            item.id != product.id && item.category.id == product.category.id)
         .toList();
   }
+}
+
+class UnitinializedProductModel extends ProductModel {
+  UnitinializedProductModel(
+      {super.id = -1,
+      super.name = '',
+      super.price = 0,
+      super.description = '',
+      super.tags = '',
+      super.category = const CategoryModel(id: -1, name: ''),
+      super.createdAt,
+      super.updatedAt,
+      super.gallery = const []});
 }

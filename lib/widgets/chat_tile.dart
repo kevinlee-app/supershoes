@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:supershoes/models/message_model.dart';
+import 'package:supershoes/models/product_model.dart';
 import 'package:supershoes/utils/theme.dart';
 
 class ChatTile extends StatelessWidget {
-  const ChatTile({super.key});
+  final MessageModel message;
+  const ChatTile({super.key, required this.message});
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.pushNamed(context, '/detail-chat');
+        Navigator.pushNamed(context, '/detail-chat',
+            arguments: {'product': UnitinializedProductModel()});
       },
       child: Container(
         margin: EdgeInsets.only(
@@ -34,7 +38,7 @@ class ChatTile extends StatelessWidget {
                         style: primaryTextStyle.copyWith(fontSize: 15),
                       ),
                       Text(
-                        'Good night, this item is on ...',
+                        message.message,
                         style: secondaryTextStyle.copyWith(fontWeight: light),
                         overflow: TextOverflow.ellipsis,
                       ),

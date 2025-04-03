@@ -403,7 +403,8 @@ class _ProductPageState extends State<ProductPage> {
                   GestureDetector(
                     onTap: () {
                       ScaffoldMessenger.of(context).removeCurrentSnackBar();
-                      Navigator.pushNamed(context, '/detail-chat');
+                      Navigator.pushNamed(context, '/detail-chat',
+                          arguments: {'product': product});
                     },
                     child: Container(
                       width: 54,

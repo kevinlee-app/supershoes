@@ -1,12 +1,63 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:supershoes/models/message_model.dart';
+import 'package:supershoes/models/product_model.dart';
+import 'package:supershoes/providers/auth_provider.dart';
+import 'package:supershoes/services/message_service.dart';
+import 'package:supershoes/utils/extensions.dart';
 import 'package:supershoes/utils/theme.dart';
 import 'package:supershoes/widgets/chat_bubble.dart';
 
-class DetailChatPage extends StatelessWidget {
+class DetailChatPage extends StatefulWidget {
   const DetailChatPage({super.key});
 
   @override
+  State<DetailChatPage> createState() => _DetailChatPageState();
+}
+
+class _DetailChatPageState extends State<DetailChatPage> {
+  bool isProductPreviewVisible = true;
+  bool isFirstLoad = true;
+
+  TextEditingController messageController = TextEditingController(text: '');
+  final ScrollController _scrollController = ScrollController();
+
+  void _scrollToBottom() {
+    if (_scrollController.hasClients) {
+      _scrollController.animateTo(
+        _scrollController.position.maxScrollExtent,
+        duration: Duration(milliseconds: isFirstLoad ? 1200 : 400),
+        curve: Curves.ease,
+      );
+      isFirstLoad = false;
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final user = Provider.of<AuthProvider>(context).user;
+    final args =
+        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+    ProductModel product = args['product'] as ProductModel;
+
+    void sendMessage() async {
+      if (messageController.text.isEmpty) {
+        return;
+      }
+
+      bool shouldAddProduct =
+          isProductPreviewVisible && product is! UnitinializedProductModel;
+      await MessageService().addMessage(
+          user,
+          shouldAddProduct ? product : UnitinializedProductModel(),
+          messageController.text);
+
+      setState(() {
+        isProductPreviewVisible = false;
+        messageController.clear();
+      });
+    }
+
     PreferredSizeWidget header() {
       return PreferredSize(
         preferredSize: Size.fromHeight(70),
@@ -70,10 +121,15 @@ class DetailChatPage extends StatelessWidget {
           children: [
             ClipRRect(
               borderRadius: BorderRadius.circular(12),
-              child: Image.asset(
-                'assets/image_shoes.png',
-                width: 54,
-              ),
+              child: product.hasGallery()
+                  ? Image.network(
+                      product.gallery[0].imageUrl,
+                      width: 54,
+                    )
+                  : Image.asset(
+                      'assets/image_shoes.png',
+                      width: 54,
+                    ),
             ),
             SizedBox(
               width: 10,
@@ -84,7 +140,7 @@ class DetailChatPage extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'COURT VISIO...',
+                    product.name,
                     style: primaryTextStyle,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -92,7 +148,7 @@ class DetailChatPage extends StatelessWidget {
                     height: 2,
                   ),
                   Text(
-                    '\$57,15',
+                    product.price.toIDR(),
                     style: priceTextStyle.copyWith(
                       fontWeight: medium,
                     ),
@@ -100,9 +156,16 @@ class DetailChatPage extends StatelessWidget {
                 ],
               ),
             ),
-            Image.asset(
-              'assets/button_close.png',
-              width: 22,
+            GestureDetector(
+              onTap: () => {
+                setState(() {
+                  isProductPreviewVisible = false;
+                })
+              },
+              child: Image.asset(
+                'assets/button_close.png',
+                width: 22,
+              ),
             ),
           ],
         ),
@@ -116,7 +179,9 @@ class DetailChatPage extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            productPreview(),
+            !isProductPreviewVisible || product is UnitinializedProductModel
+                ? SizedBox()
+                : productPreview(),
             Row(
               children: [
                 Expanded(
@@ -131,6 +196,7 @@ class DetailChatPage extends StatelessWidget {
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: TextFormField(
+                      controller: messageController,
                       style: primaryTextStyle,
                       decoration: InputDecoration.collapsed(
                         hintText: 'Type message',
@@ -142,9 +208,12 @@ class DetailChatPage extends StatelessWidget {
                 SizedBox(
                   width: 20,
                 ),
-                Image.asset(
-                  'assets/button_send.png',
-                  width: 45,
+                GestureDetector(
+                  onTap: sendMessage,
+                  child: Image.asset(
+                    'assets/button_send.png',
+                    width: 45,
+                  ),
                 ),
               ],
             ),
@@ -154,22 +223,27 @@ class DetailChatPage extends StatelessWidget {
     }
 
     Widget content() {
-      return ListView(
-        padding: EdgeInsets.symmetric(
-          horizontal: defaultMargin,
-        ),
-        children: [
-          ChatBubble(
-            isSender: true,
-            text: 'Hi, is this item still available?',
-            hasProduct: true,
-          ),
-          ChatBubble(
-            isSender: false,
-            text: 'Yes, of course!',
-          ),
-        ],
-      );
+      return StreamBuilder<List<MessageModel>>(
+          stream: MessageService().getMessageByUserId(user.id),
+          builder: (context, snapshot) {
+            if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                Future.delayed(Duration(milliseconds: isFirstLoad ? 500 : 0), _scrollToBottom);
+              });
+              return ListView(
+                  controller: _scrollController,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: defaultMargin,
+                  ),
+                  children: snapshot.data!
+                      .map((message) => ChatBubble(message: message))
+                      .toList());
+            } else {
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+          });
     }
 
     return Scaffold(

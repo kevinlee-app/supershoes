@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:supershoes/models/message_model.dart';
+import 'package:supershoes/models/user_model.dart';
+import 'package:supershoes/providers/auth_provider.dart';
+import 'package:supershoes/services/message_service.dart';
 import 'package:supershoes/utils/theme.dart';
 import 'package:supershoes/widgets/chat_tile.dart';
 
@@ -7,6 +12,7 @@ class ChatPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    UserModel user = Provider.of<AuthProvider>(context).user;
     Widget header() {
       return AppBar(
         backgroundColor: backgroundColor1,
@@ -20,23 +26,6 @@ class ChatPage extends StatelessWidget {
         ),
         elevation: 0,
         automaticallyImplyLeading: false,
-      );
-    }
-
-    Widget content() {
-      return Expanded(
-        child: Container(
-          color: backgroundColor3,
-          width: double.infinity,
-          child: ListView(
-            padding: EdgeInsets.symmetric(
-              horizontal: defaultMargin,
-            ),
-            children: [
-              ChatTile(),
-            ],
-          ),
-        ),
       );
     }
 
@@ -97,6 +86,34 @@ class ChatPage extends StatelessWidget {
           ),
         ),
       );
+    }
+
+    Widget content() {
+      return StreamBuilder<List<MessageModel>>(
+          stream: MessageService().getMessageByUserId(user.id),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              if (snapshot.data!.isEmpty) {
+                return emptyChat();
+              }
+              return Expanded(
+                child: Container(
+                  color: backgroundColor3,
+                  width: double.infinity,
+                  child: ListView(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: defaultMargin,
+                    ),
+                    children: [
+                      ChatTile(message: snapshot.data!.last),
+                    ],
+                  ),
+                ),
+              );
+            } else {
+              return emptyChat();
+            }
+          });
     }
 
     return Column(

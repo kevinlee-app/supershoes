@@ -2,7 +2,7 @@ class CategoryModel {
   final int id;
   final String name;
 
-   CategoryModel({
+  const CategoryModel({
     required this.id,
     required this.name,
   });

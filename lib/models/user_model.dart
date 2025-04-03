@@ -7,7 +7,7 @@ class UserModel {
   final String username;
   final String profilePhotoUrl;
   final bool isStaff;
-  final TokenModel token;
+  final TokenModel? token;
 
   UserModel(
       {required this.id,
@@ -16,7 +16,7 @@ class UserModel {
       required this.username,
       required this.profilePhotoUrl,
       required this.isStaff,
-      required this.token});
+      this.token});
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
@@ -26,11 +26,13 @@ class UserModel {
         username: json['user']['username'] as String,
         profilePhotoUrl: json['user']['profile_photo_url'] as String,
         isStaff: json['user']['is_staff'] as bool,
-        token: TokenModel.fromJson(json['token']));
+        token: json['token'] != null
+            ? TokenModel.fromJson(json['token'])
+            : null);
   }
 
-  Map<String, dynamic> toJson() {
-    return {
+  Map<String, dynamic> toJson([bool withToken = true]) {
+    Map<String, dynamic> data = {
       'user': {
         'id': id,
         'name': name,
@@ -39,7 +41,11 @@ class UserModel {
         'profile_photo_url': profilePhotoUrl,
         'is_staff': isStaff,
       },
-      'token': token.toJson()
     };
+    if (token != null && withToken) {
+      data['token'] = token!.toJson();
+    }
+
+    return data;
   }
 }

@@ -1,16 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:supershoes/models/message_model.dart';
+import 'package:supershoes/models/product_model.dart';
+import 'package:supershoes/utils/extensions.dart';
 import 'package:supershoes/utils/theme.dart';
 
 class ChatBubble extends StatelessWidget {
-  final String text;
-  final bool isSender;
-  final bool hasProduct;
+  final MessageModel message;
 
-  ChatBubble(
-      {super.key,
-      this.isSender = false,
-      this.text = '',
-      this.hasProduct = false});
+  const ChatBubble({super.key, required this.message});
 
   @override
   Widget build(BuildContext context) {
@@ -22,10 +19,10 @@ class ChatBubble extends StatelessWidget {
           bottom: 12,
         ),
         decoration: BoxDecoration(
-          color: isSender ? backgroundColor5 : backgroundColor4,
+          color: !message.user.isStaff ? backgroundColor5 : backgroundColor4,
           borderRadius: BorderRadius.only(
-            topRight: Radius.circular(isSender ? 0 : 12),
-            topLeft: Radius.circular(isSender ? 12 : 0),
+            topRight: Radius.circular(!message.user.isStaff ? 0 : 12),
+            topLeft: Radius.circular(!message.user.isStaff ? 12 : 0),
             bottomLeft: Radius.circular(12),
             bottomRight: Radius.circular(12),
           ),
@@ -36,10 +33,15 @@ class ChatBubble extends StatelessWidget {
               children: [
                 ClipRRect(
                   borderRadius: BorderRadius.circular(12),
-                  child: Image.asset(
-                    'assets/image_shoes.png',
-                    width: 70,
-                  ),
+                  child: message.product.hasGallery()
+                      ? Image.network(
+                          message.product.gallery[0].imageUrl,
+                          width: 70,
+                        )
+                      : Image.asset(
+                          'assets/image_shoes.png',
+                          width: 70,
+                        ),
                 ),
                 SizedBox(
                   width: 8,
@@ -49,14 +51,14 @@ class ChatBubble extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'COURT VISION 2.0 SHOES',
+                      message.product.name,
                       style: primaryTextStyle,
                     ),
                     SizedBox(
                       height: 4,
                     ),
                     Text(
-                      '\$57,15',
+                      message.product.price.toIDR(),
                       style: priceTextStyle.copyWith(fontWeight: medium),
                     ),
                   ],
@@ -116,13 +118,17 @@ class ChatBubble extends StatelessWidget {
         width: double.infinity,
         margin: EdgeInsets.only(top: 30),
         child: Column(
-          crossAxisAlignment:
-              isSender ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+          crossAxisAlignment: !message.user.isStaff
+              ? CrossAxisAlignment.end
+              : CrossAxisAlignment.start,
           children: [
-            hasProduct ? productPreview() : SizedBox(),
+            message.product is! UnitinializedProductModel
+                ? productPreview()
+                : SizedBox(),
             Row(
-              mainAxisAlignment:
-                  isSender ? MainAxisAlignment.end : MainAxisAlignment.start,
+              mainAxisAlignment: !message.user.isStaff
+                  ? MainAxisAlignment.end
+                  : MainAxisAlignment.start,
               children: [
                 Container(
                   padding: EdgeInsets.symmetric(
@@ -130,16 +136,18 @@ class ChatBubble extends StatelessWidget {
                     vertical: 12,
                   ),
                   decoration: BoxDecoration(
-                    color: isSender ? backgroundColor5 : backgroundColor4,
+                    color: !message.user.isStaff
+                        ? backgroundColor5
+                        : backgroundColor4,
                     borderRadius: BorderRadius.only(
-                      topRight: Radius.circular(isSender ? 0 : 12),
-                      topLeft: Radius.circular(isSender ? 12 : 0),
+                      topRight: Radius.circular(!message.user.isStaff ? 0 : 12),
+                      topLeft: Radius.circular(!message.user.isStaff ? 12 : 0),
                       bottomLeft: Radius.circular(12),
                       bottomRight: Radius.circular(12),
                     ),
                   ),
                   child: Text(
-                    text,
+                    message.message,
                     style: primaryTextStyle,
                   ),
                 )
