@@ -1,3 +1,4 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:supershoes/pages/cart_page.dart';
@@ -18,7 +19,9 @@ import 'package:supershoes/providers/product_provider.dart';
 import 'package:supershoes/providers/transaction_provider.dart';
 import 'package:supershoes/providers/wishlist_provider.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(const MainApp());
 }
 

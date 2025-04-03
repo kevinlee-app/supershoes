@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:supershoes/models/token_model.dart';
@@ -22,7 +23,7 @@ enum Endpoint {
   const Endpoint(this.value);
 
   Uri get url {
-    String baseUrl = Constant.baseUrl;
+    String baseUrl = Platform.isAndroid ? "http://10.0.2.2:8000/" : "http://127.0.0.1:8000/";
     return Uri.parse('$baseUrl$value/');
   }
 

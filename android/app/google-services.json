@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "609745314030",
+    "project_id": "super-shoes-dad16",
+    "storage_bucket": "super-shoes-dad16.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:609745314030:android:6a23d2dd21f1580bc713ff",
+        "android_client_info": {
+          "package_name": "com.leebrium.supershoes"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC5WZbmXPEiLJonH5uRX5QnhFfzDEL5DU4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

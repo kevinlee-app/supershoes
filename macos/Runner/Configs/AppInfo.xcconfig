@@ -8,7 +8,7 @@
 PRODUCT_NAME = supershoes
 
 // The application's bundle identifier
-PRODUCT_BUNDLE_IDENTIFIER = com.example.supershoes
+PRODUCT_BUNDLE_IDENTIFIER = com.leebrium.supershoes
 
 // The copyright displayed in application information
 PRODUCT_COPYRIGHT = Copyright © 2025 com.example. All rights reserved.
