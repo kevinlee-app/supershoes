@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:supershoes/models/message_model.dart';
 import 'package:supershoes/models/user_model.dart';
 import 'package:supershoes/providers/auth_provider.dart';
+import 'package:supershoes/providers/page_provider.dart';
 import 'package:supershoes/services/message_service.dart';
 import 'package:supershoes/utils/theme.dart';
 import 'package:supershoes/widgets/chat_tile.dart';
@@ -12,7 +13,9 @@ class ChatPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    UserModel user = Provider.of<AuthProvider>(context).user;
+    final UserModel user = Provider.of<AuthProvider>(context).user;
+    final PageProvider pageProvider = Provider.of<PageProvider>(context);
+
     Widget header() {
       return AppBar(
         backgroundColor: backgroundColor1,
@@ -62,7 +65,9 @@ class ChatPage extends StatelessWidget {
               SizedBox(
                 height: 44,
                 child: TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    pageProvider.currentIndex = 0;
+                  },
                   style: TextButton.styleFrom(
                     padding: EdgeInsets.symmetric(
                       horizontal: 24,

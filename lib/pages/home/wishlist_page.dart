@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:supershoes/providers/page_provider.dart';
 import 'package:supershoes/providers/wishlist_provider.dart';
 import 'package:supershoes/utils/theme.dart';
 import 'package:supershoes/widgets/wishlist_card.dart';
 
 class WishlistPage extends StatelessWidget {
-  final void Function() backToHome;
-
-  const WishlistPage(this.backToHome, {super.key});
+  const WishlistPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     final wishlistProvider = Provider.of<WishlistProvider>(context);
+    final PageProvider pageProvider = Provider.of<PageProvider>(context);
 
     Widget header() {
       return AppBar(
@@ -61,7 +61,9 @@ class WishlistPage extends StatelessWidget {
               SizedBox(
                 height: 44,
                 child: TextButton(
-                  onPressed: backToHome,
+                  onPressed: () {
+                    pageProvider.currentIndex = 0;
+                  },
                   style: TextButton.styleFrom(
                     padding: EdgeInsets.symmetric(
                       horizontal: 24,
