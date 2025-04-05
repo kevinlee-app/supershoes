@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:supershoes/models/user_model.dart';
 import 'package:supershoes/providers/auth_provider.dart';
+import 'package:supershoes/utils/storage.dart';
 import 'package:supershoes/utils/theme.dart';
 
 class ProfilePage extends StatelessWidget {
@@ -59,6 +60,7 @@ class ProfilePage extends StatelessWidget {
                 ),
                 GestureDetector(
                   onTap: () {
+                    Storage.instance.deleteUser();
                     Navigator.pushNamedAndRemoveUntil(
                         context, '/sign-in', (route) => false);
                   },
