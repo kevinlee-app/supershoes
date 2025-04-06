@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:supershoes/models/user_model.dart';
 import 'package:supershoes/providers/auth_provider.dart';
+import 'package:supershoes/providers/home_provider.dart';
 import 'package:supershoes/providers/product_provider.dart';
 import 'package:supershoes/utils/theme.dart';
+import 'package:supershoes/widgets/category_button.dart';
 import 'package:supershoes/widgets/product_card.dart';
 import 'package:supershoes/widgets/product_tile.dart';
 
@@ -12,9 +14,11 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    AuthProvider authProvider = Provider.of<AuthProvider>(context);
-    ProductProvider productProvider = Provider.of<ProductProvider>(context);
-    UserModel user = authProvider.user;
+    final AuthProvider authProvider = Provider.of<AuthProvider>(context);
+    final ProductProvider productProvider =
+        Provider.of<ProductProvider>(context);
+    final HomeProvider homeProvider = Provider.of<HomeProvider>(context);
+    final UserModel user = authProvider.user;
 
     Widget header() {
       return Container(
@@ -72,108 +76,10 @@ class HomePage extends StatelessWidget {
               SizedBox(
                 width: defaultMargin,
               ),
-              Container(
-                padding: EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 10,
-                ),
-                margin: EdgeInsets.only(right: 16),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
-                  color: primaryColor,
-                ),
-                child: Text(
-                  'All Shoes',
-                  style: primaryTextStyle.copyWith(
-                    fontSize: 13,
-                    fontWeight: medium,
-                  ),
-                ),
-              ),
-              Container(
-                padding: EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 10,
-                ),
-                margin: EdgeInsets.only(right: 16),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: subtitleColor,
-                  ),
-                  color: transparentColor,
-                ),
-                child: Text(
-                  'Running',
-                  style: subtitleTextStyle.copyWith(
-                    fontSize: 13,
-                    fontWeight: medium,
-                  ),
-                ),
-              ),
-              Container(
-                padding: EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 10,
-                ),
-                margin: EdgeInsets.only(right: 16),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: subtitleColor,
-                  ),
-                  color: transparentColor,
-                ),
-                child: Text(
-                  'Training',
-                  style: subtitleTextStyle.copyWith(
-                    fontSize: 13,
-                    fontWeight: medium,
-                  ),
-                ),
-              ),
-              Container(
-                padding: EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 10,
-                ),
-                margin: EdgeInsets.only(right: 16),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: subtitleColor,
-                  ),
-                  color: transparentColor,
-                ),
-                child: Text(
-                  'Basketball',
-                  style: subtitleTextStyle.copyWith(
-                    fontSize: 13,
-                    fontWeight: medium,
-                  ),
-                ),
-              ),
-              Container(
-                padding: EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 10,
-                ),
-                margin: EdgeInsets.only(right: 16),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: subtitleColor,
-                  ),
-                  color: transparentColor,
-                ),
-                child: Text(
-                  'Hiking',
-                  style: subtitleTextStyle.copyWith(
-                    fontSize: 13,
-                    fontWeight: medium,
-                  ),
-                ),
-              ),
+              Row(
+                  children: productProvider.categories
+                      .map((category) => CategoryButton(category: category))
+                      .toList()),
             ],
           ),
         ),
@@ -209,7 +115,8 @@ class HomePage extends StatelessWidget {
               ),
               Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: productProvider.products
+                  children: productProvider
+                      .productsByCategory(homeProvider.currentCategoryId)
                       .map((product) => ProductCard(
                             product: product,
                           ))
@@ -241,7 +148,7 @@ class HomePage extends StatelessWidget {
       return Container(
         margin: EdgeInsets.only(top: 14),
         child: Column(
-          children: productProvider.products
+          children: productProvider.newArrivalProducts
               .map((product) => ProductTile(
                     product: product,
                   ))
