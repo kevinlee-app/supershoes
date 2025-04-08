@@ -239,9 +239,7 @@ class _DetailChatPageState extends State<DetailChatPage> {
                       .map((message) => ChatBubble(message: message))
                       .toList());
             } else {
-              return Center(
-                child: CircularProgressIndicator(),
-              );
+              return Container();
             }
           });
     }
