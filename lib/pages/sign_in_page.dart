@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:supershoes/models/user_model.dart';
 import 'package:supershoes/providers/auth_provider.dart';
 import 'package:supershoes/providers/page_provider.dart';
 import 'package:supershoes/utils/theme.dart';
@@ -22,6 +23,7 @@ class _SignInPageState extends State<SignInPage> {
   Widget build(BuildContext context) {
     AuthProvider authProvider = Provider.of<AuthProvider>(context);
     PageProvider pageProvider = Provider.of<PageProvider>(context);
+    emailController.text = authProvider.user.username;
 
     handleSignIn() async {
       setState(() {
@@ -32,7 +34,7 @@ class _SignInPageState extends State<SignInPage> {
         password: passwordController.text,
       )) {
         pageProvider.currentIndex = 0;
-        Navigator.pushNamed(context, '/home');
+        Navigator.pushReplacementNamed(context, '/home');
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(

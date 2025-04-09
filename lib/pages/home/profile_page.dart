@@ -60,7 +60,7 @@ class ProfilePage extends StatelessWidget {
                 ),
                 GestureDetector(
                   onTap: () {
-                    Storage.instance.deleteUser();
+                    Storage.instance.deleteUserToken();
                     Navigator.pushNamedAndRemoveUntil(
                         context, '/sign-in', (route) => false);
                   },

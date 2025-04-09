@@ -4,7 +4,7 @@ import 'package:supershoes/services/auth_service.dart';
 import 'package:supershoes/utils/storage.dart';
 
 class AuthProvider with ChangeNotifier {
-  late UserModel _user;
+  UserModel _user = UnitinializedUserModel();
   UserModel get user => _user;
 
   set user(UserModel user) {
@@ -50,13 +50,10 @@ class AuthProvider with ChangeNotifier {
     }
   }
   
-  Future<bool> getUser() async {
+  Future<void> getPreviouslyLoggedInUser() async {
     final savedUser = await Storage.instance.getUser();
     if (savedUser != null) {
-      _user = savedUser;
-      return true;
+      user = savedUser;
     }
-
-    return false;
   }
 }

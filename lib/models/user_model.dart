@@ -48,4 +48,27 @@ class UserModel {
 
     return data;
   }
+
+  UserModel copyWithoutToken() => UserModel(
+        id: id,
+        name: name,
+        email: email,
+        username: username,
+        profilePhotoUrl: profilePhotoUrl,
+        isStaff: isStaff,
+        token: null,
+      );
+
+  bool get isAuthorized => token != null && (token?.access.isNotEmpty ?? false);
+}
+
+class UnitinializedUserModel extends UserModel {
+  UnitinializedUserModel(
+      {super.id = 0,
+      super.name = '',
+      super.email = '',
+      super.username = '',
+      super.profilePhotoUrl = '',
+      super.isStaff = false,
+      super.token});
 }

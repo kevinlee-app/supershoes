@@ -30,8 +30,11 @@ class Storage {
     }
   }
 
-  Future<void> deleteUser() async {
-    await _storage.delete(key: 'user');
+  Future<void> deleteUserToken() async {
+    UserModel? user = await getUser();
+    if (user != null) {
+      user = user.copyWithoutToken();
+      await saveUser(user);
+    }
   }
-
 }

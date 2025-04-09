@@ -87,7 +87,7 @@ class BaseService {
         await Storage.instance.saveToken(token);
         return await request();
       } else {
-        await Storage.instance.deleteUser();
+        await Storage.instance.deleteUserToken();
       }
     }
 
